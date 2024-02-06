@@ -55,6 +55,7 @@ body {
   background-color: var(--color-background-500);
   border-radius: 0.9rem;
   overflow: scroll;
+  scrollbar-width: none;
   position: relative;
 }
 
@@ -139,6 +140,7 @@ body {
   list-style: none;
   padding: 0.8rem 0;
   overflow: scroll;
+  scrollbar-width: none;
 }
 
 .list-watched {
@@ -379,3 +381,54 @@ EMPTY STAR
 </svg>
 
 */
+
+@media screen and (max-width: 768px) {
+  .nav-bar {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 2rem;
+    padding: 0 3.2rem;
+  }
+
+  .search {
+    width: 100%;
+  }
+
+  .main {
+    flex-direction: column;
+    height: unset;
+    gap: 2.4rem;
+  }
+
+  .box {
+    height: 40vh;
+    width: 100%;
+  }
+  .list {
+    width: 100%;
+  }
+
+  .summary {
+    padding: 2rem 1rem;
+  }
+
+  .details {
+    padding: 2.4rem;
+  }
+
+  .details img {
+    width: 100%;
+  }
+
+  .details-overview {
+    padding: 2.4rem 1.6rem;
+  }
+
+  .rating {
+    padding: 2rem 1.6rem;
+  }
+
+  .num-results {
+    padding-bottom: 1rem;
+  }
+}
