@@ -13,16 +13,6 @@ const starContainerStyle = {
 
 // React team recommends using TypeScript for type checking
 
-StarRating.propTypes = {
-  maxRating: PropTypes.number,
-  color: PropTypes.string,
-  size: PropTypes.number,
-  className: PropTypes.string,
-  messages: PropTypes.array,
-  defaultRating: PropTypes.number,
-  onSetRating: PropTypes.func,
-};
-
 const StarRating = ({
   maxRating = 5,
   color = "#ffcc49",
@@ -117,6 +107,16 @@ const Star = ({
       )}
     </span>
   );
+};
+
+StarRating.propTypes = {
+  maxRating: PropTypes.number,
+  color: PropTypes.string,
+  size: PropTypes.number,
+  className: PropTypes.string,
+  messages: PropTypes.array,
+  defaultRating: PropTypes.number,
+  onSetRating: PropTypes.func,
 };
 
 export default StarRating;
