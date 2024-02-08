@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 const containerStyle = {
   display: "flex",
@@ -10,15 +11,34 @@ const starContainerStyle = {
   display: "flex",
 };
 
+// React team recommends using TypeScript for type checking
+
+StarRating.propTypes = {
+  maxRating: PropTypes.number,
+  color: PropTypes.string,
+  size: PropTypes.number,
+  className: PropTypes.string,
+  messages: PropTypes.array,
+  defaultRating: PropTypes.number,
+  onSetRating: PropTypes.func,
+};
+
 const StarRating = ({
   maxRating = 5,
   color = "#ffcc49",
   size = 24,
   className = "",
   messages = [],
+  defaultRating = 0,
+  onSetRating,
 }) => {
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(defaultRating);
   const [tempRating, setTempRating] = useState(0);
+
+  function handleRating(rating) {
+    setRating(rating);
+    onSetRating(rating);
+  }
 
   const textStyle = {
     lineHeight: "0",
@@ -26,8 +46,6 @@ const StarRating = ({
     color,
     fontSize: `${size / 1.5}px`,
   };
-  console.log("messages.length", messages.length);
-  console.log("maxRating", maxRating);
 
   return (
     <div style={containerStyle} className={className}>
@@ -35,7 +53,7 @@ const StarRating = ({
         {Array.from({ length: maxRating }, (_, i) => (
           <Star
             key={i}
-            onClick={() => setRating(i + 1)}
+            onClick={() => handleRating(i + 1)}
             full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
             onHoverIn={() => setTempRating(i + 1)}
             onHoverOut={() => setTempRating(0)}
