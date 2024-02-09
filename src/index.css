@@ -243,6 +243,11 @@ body {
   gap: 0.8rem;
 }
 
+.addToListIcon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
 /* ******* */
 
 .details {

@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
-export default function MovieDetails({ selectedId, onCloseMovie, omdbKey }) {
+export default function MovieDetails({
+  selectedId,
+  onCloseMovie,
+  omdbKey,
+  onAddWatched,
+  watched,
+}) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState("");
 
   const {
     Title: title,
@@ -29,7 +36,44 @@ export default function MovieDetails({ selectedId, onCloseMovie, omdbKey }) {
       setIsLoading(false);
     };
     fetchMovie();
-  }, [selectedId]);
+  }, [selectedId, omdbKey]);
+
+  const movieInWatched = watched.find((movie) => movie.imdbID === selectedId);
+
+  function handleAdd() {
+    const newWatchedMovie = {
+      imdbID: selectedId,
+      title,
+      year,
+      poster,
+      imdbRating: Number(imdbRating),
+      runtime: runtime !== "N/A" ? Number(runtime.split(" ")[0]) : 0,
+      userRating: userRating ? Number(userRating) : 0,
+    };
+    onAddWatched(newWatchedMovie);
+    onCloseMovie();
+  }
+
+  useEffect(() => {
+    document.title = title ? `Movie | ${title}` : "Movie";
+
+    return () => {
+      document.title = "usePopcorn";
+    };
+  }, [title]);
+
+  useEffect(() => {
+    function callback(e) {
+      if (e.code === "Escape") {
+        onCloseMovie();
+      }
+    }
+    document.addEventListener("keydown", callback);
+
+    return () => {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [onCloseMovie]);
 
   return (
     <div className='details'>
@@ -69,7 +113,38 @@ export default function MovieDetails({ selectedId, onCloseMovie, omdbKey }) {
           </header>
           <section>
             <div className='rating'>
-              <StarRating maxRating={10} size={24} />
+              {!movieInWatched ? (
+                <>
+                  {" "}
+                  <StarRating
+                    maxRating={10}
+                    size={24}
+                    onSetRating={setUserRating}
+                  />{" "}
+                  {userRating > 0 ? (
+                    <button className='btn-add' onClick={handleAdd}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          gap: ".5rem",
+                        }}>
+                        <img
+                          className='addToListIcon'
+                          src='../add-to-list.svg'
+                          alt='Add to list icon'
+                        />
+                        Add to list
+                      </div>
+                    </button>
+                  ) : null}{" "}
+                </>
+              ) : (
+                <p>
+                  You rated this movie {movieInWatched.userRating}{" "}
+                  <span>⭐</span>
+                </p>
+              )}
             </div>
             <p>
               <em>{plot}</em>

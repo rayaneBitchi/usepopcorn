@@ -29,17 +29,26 @@ export default function App() {
     setSelectedId(null);
   }
 
+  function handleAddWatched(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleDeleteWatched(id) {
+    setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+  }
+
   useEffect(() => {
-    const feactMovies = async () => {
+    const controller = new AbortController();
+    const featchMovies = async () => {
       try {
         setIsLoading(true);
         setError("");
         const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${omdbKey}&s=${query}`
+          `https://www.omdbapi.com/?apikey=${omdbKey}&s=${query}`,
+          { signal: controller.signal }
         );
 
         const data = await res.json();
-        console.log(data);
 
         if (!res.ok) {
           throw new Error(
@@ -52,9 +61,11 @@ export default function App() {
         }
 
         setMovies(data.Search);
-        setIsLoading(false);
+        setError("");
       } catch (error) {
-        setError(error.message);
+        if (error.name !== "AbortError") {
+          setError(error.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -65,7 +76,12 @@ export default function App() {
       setError("");
       return;
     }
-    feactMovies();
+    handleCloseMovie();
+    featchMovies();
+
+    return () => {
+      controller.abort();
+    };
   }, [query]);
 
   return (
@@ -93,11 +109,16 @@ export default function App() {
               selectedId={selectedId}
               onCloseMovie={handleCloseMovie}
               omdbKey={omdbKey}
+              onAddWatched={handleAddWatched}
+              watched={watched}
             />
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMoviesList watched={watched} />
+              <WatchedMoviesList
+                watched={watched}
+                onDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
