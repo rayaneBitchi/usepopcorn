@@ -1,16 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
+const omdbKey = process.env.REACT_APP_OMDB_API_KEY;
+
 export default function MovieDetails({
   selectedId,
   onCloseMovie,
-  omdbKey,
   onAddWatched,
   watched,
 }) {
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
+
+  const countRef = useRef(0);
+
+  useEffect(() => {
+    if (userRating) countRef.current++;
+  }, [userRating]);
 
   const {
     Title: title,
@@ -36,7 +43,7 @@ export default function MovieDetails({
       setIsLoading(false);
     };
     fetchMovie();
-  }, [selectedId, omdbKey]);
+  }, [selectedId]);
 
   const movieInWatched = watched.find((movie) => movie.imdbID === selectedId);
 
@@ -49,6 +56,7 @@ export default function MovieDetails({
       imdbRating: Number(imdbRating),
       runtime: runtime !== "N/A" ? Number(runtime.split(" ")[0]) : 0,
       userRating: userRating ? Number(userRating) : 0,
+      countRatingDecisions: countRef.current,
     };
     onAddWatched(newWatchedMovie);
     onCloseMovie();

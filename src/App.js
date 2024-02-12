@@ -10,21 +10,20 @@ import ErrorMessage from "./ErrorMessage";
 import MovieDetails from "./MovieDetails";
 import Loader from "./Loader";
 
+import { useMovies } from "./useMovies";
+
 import { useEffect, useState } from "react";
 
-const omdbKey = process.env.REACT_APP_OMDB_API_KEY;
-
 export default function App() {
-  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(() => {
     const storedValue = localStorage.getItem("watched");
     return storedValue ? JSON.parse(storedValue) : [];
   });
   // const [watched, setWatched] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+  const { movies, isLoading, error } = useMovies(query, handleCloseMovie);
 
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
@@ -46,53 +45,6 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("watched", JSON.stringify(watched));
   }, [watched]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const featchMovies = async () => {
-      try {
-        setIsLoading(true);
-        setError("");
-        const res = await fetch(
-          `https://www.omdbapi.com/?apikey=${omdbKey}&s=${query}`,
-          { signal: controller.signal }
-        );
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(
-            "Something went wrong during the movie fetch request"
-          );
-        }
-
-        if (data.Response === "False") {
-          throw new Error("Movie not found");
-        }
-
-        setMovies(data.Search);
-        setError("");
-      } catch (error) {
-        if (error.name !== "AbortError") {
-          setError(error.message);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (query.length < 3) {
-      setMovies([]);
-      setError("");
-      return;
-    }
-    handleCloseMovie();
-    featchMovies();
-
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
 
   return (
     <>
@@ -118,7 +70,6 @@ export default function App() {
             <MovieDetails
               selectedId={selectedId}
               onCloseMovie={handleCloseMovie}
-              omdbKey={omdbKey}
               onAddWatched={handleAddWatched}
               watched={watched}
             />
