@@ -398,10 +398,21 @@ FONT SIZE SYSTEM (px)
 
   .details {
     padding: 2.4rem;
+    font-size: 1.8rem;
+  }
+
+  .details header {
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+
+  .details-overview {
+    font-size: 1.7rem;
   }
 
   .details img {
     width: 100%;
+    border-radius: 8px;
   }
 
   .details-overview {
@@ -409,7 +420,17 @@ FONT SIZE SYSTEM (px)
   }
 
   .rating {
-    padding: 2rem 1.6rem;
+    margin-left: -50px;
+    width: 80vw;
+    font-size: 1.3rem;
+    flex-direction: column;
+    /* flex-direction: column; */
+    /* gap: 2.4rem; */
+  }
+
+  .rating div {
+    display: flex;
+    gap: 0;
   }
 
   .num-results {
